@@ -2,18 +2,39 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+
 class Book extends BaseModel
 {
+    use Sluggable;
+    use SluggableScopeHelpers;
+
     protected $fillable = [
         'category_id',
         'title',
         'description',
-        'author',
         'publish_date',
         'image',
         'number_of_pages',
         'avg_rate',
+        'author_id',
+        'slug',
     ];
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'title',
+            ],
+        ];
+    }
 
     /**
      * Define a book to many user favorited books
@@ -57,5 +78,15 @@ class Book extends BaseModel
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get author belongs to a book
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function author()
+    {
+        return $this->belongsTo(Author::class);
     }
 }

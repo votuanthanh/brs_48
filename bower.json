@@ -1,0 +1,21 @@
+{
+  "name": "Thanh",
+  "description": "project 2",
+  "main": "",
+  "authors": [
+    "Vo.Tuan.Thanh <thanh.dtu94@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/votuanthanh/brs_48",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "raty": "^2.7.1"
+  }
+}

@@ -14,4 +14,7 @@
 Route::get('/', function () {
     return view('admin.index');
 });
+
+Route::get('test', 'Web\UserController@index');
+
 Auth::routes();

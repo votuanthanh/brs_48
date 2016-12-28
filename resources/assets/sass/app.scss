@@ -7,3 +7,15 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+//css for all
+@import "common";
+
+//cutomize modal login
+@import "login_form";
+
+//admin
+@import "admin";
+
+//combobox bootrap
+@import "combobox"

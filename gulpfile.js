@@ -1,7 +1,5 @@
 const elixir = require('laravel-elixir');
 
-require('laravel-elixir-vue-2');
-
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -12,8 +10,13 @@ require('laravel-elixir-vue-2');
  | file for our application, as well as publishing vendor resources.
  |
  */
+process.env.DISABLE_NOTIFIER = true;
 
 elixir(mix => {
     mix.sass('app.scss')
-       .webpack('app.js');
+        .webpack('app.js')
+        .browserSync({
+            notify: false,
+            proxy: 'http://localhost:8000',
+        });
 });

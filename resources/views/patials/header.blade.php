@@ -9,9 +9,39 @@
                 <div class="your-welcome">
                     <span>{{ trans('common.text.welcome') }}</span>
                 </div>
-                <a href="#" data-toggle="modal" data-target="#login-modal" id="action-login">{{ trans('form.button.login') }}</a>
-                &ndash;
-                <a href="#" id="action-register" data-toggle="modal" data-target="#login-modal">{{ trans('form.button.register') }}</a>
+                @if (auth()->check() && auth()->user())
+                    <div class="profile-user">
+                        <div class="dropdown">
+                            <a href="javascript:void(0)" class="name-user">{{ auth()->user()->name }}  <span class="caret"></span></a>
+                            <ul class="dropdown-content">
+                                <li>
+                                    <a href="#"><span class="glyphicon glyphicon-user"></span> {{ trans('form.label.profile') }}</a>
+                                </li>
+                                <li>
+                                    <a id="logout-submit" href="#">
+                                        <span class="glyphicon glyphicon-log-out"></span>
+                                        {{ trans('form.button.logout') }}
+                                        {!! Form::open([
+                                            'action' => 'Auth\LoginController@logout',
+                                            'method' => 'POST',
+                                            'role' => 'form',
+                                            'id' => 'form-logout',
+                                        ]) !!}
+                                        {!! Form::close() !!}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                @else
+                    <a href="#" data-toggle="modal" data-target="#auth-modal" id="action-login">
+                        {{ trans('form.button.login') }}
+                    </a>
+                    &ndash;
+                    <a href="#" id="action-register" data-toggle="modal" data-target="#auth-modal">
+                        {{ trans('form.button.register') }}
+                    </a>
+                @endif
             </div>
             <div class="clearfix"></div>
         </div>

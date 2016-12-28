@@ -10,12 +10,15 @@ require('./bootstrap');
 require('./combobox');
 
 $(document).ready(function () {
-    $('#wrapper-modal-auth').on('#action-register', 'click', function () {
+
+    $('.auth-modal').modal();
+
+    $('#action-register').on('click', function () {
         $('#login-form').hide();
         $('#register-form').show();
     });
 
-    $('#wrapper-modal-auth').on('#action-login', 'click', function () {
+    $('#action-login').on('click', function () {
         $('#login-form').show();
         $('#register-form').hide();
     });
@@ -29,7 +32,100 @@ $(document).ready(function () {
     $('.combobox').combobox();
 
     //set star for book
-    $('#star1').raty({ starType: 'i', score      : 5});
+    //$('#star1').raty({ starType: 'i', score : 5});
+
+    /**
+     * PROCESS FORM
+     */
+
+    //submit log out
+    $('#logout-submit').click(function () {
+        event.preventDefault();
+        $("#form-logout").submit();
+    });
+
+    //Validate Login Form
+    $('#login-form').bootstrapValidator({
+        framework: 'bootstrap',
+        icon: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+            email: {
+                validators: {
+                    notEmpty: {
+                    },
+                    emailAddress: {
+                    }
+                }
+            },
+            password: {
+                validators: {
+                    notEmpty: {
+                    },
+                    stringLength: {
+                        min: 4
+                    }
+                }
+            },
+        }
+    });
+
+    //Validate Login Form
+    $('#register-form').bootstrapValidator({
+        framework: 'bootstrap',
+        icon: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+            name: {
+                validators: {
+                    notEmpty: {
+                    },
+                }
+            },
+            email: {
+                validators: {
+                    notEmpty: {
+                    },
+                    emailAddress: {
+                    }
+                }
+            },
+            password: {
+                validators: {
+                    notEmpty: {
+                    },
+                    stringLength: {
+                        min: 4
+                    }
+                }
+            },
+            password_confirmation: {
+                validators: {
+                    identical: {
+                        field: 'password',
+                        message: 'The password and its confirm are not the same',
+                    }
+                }
+            },
+            avatar: {
+                validators: {
+                    file: {
+                        extension: 'jpeg,jpg,png',
+                        type: 'image/jpeg,image/png',
+                        maxSize: 512000,   // 2048 * 1024
+                        message: 'Files must be jpeg, jpg, png',
+                    }
+                }
+            }
+        }
+    });
+
 });
 
 //LOGIN + REGISTRY + LOST FORM

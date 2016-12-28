@@ -1,6 +1,8 @@
 //Login form
-#login-modal .modal-dialog {
-    width: 350px;
+#auth-modal {
+    .modal-dialog {
+        width: 350px;
+    }
 }
 
 .modal-body input, .input-group, textarea[name=description] {
@@ -10,6 +12,9 @@
     }
 }
 
+input[type=checkox] {
+    margin: 0;
+}
 
 #div-login-msg,
 #div-lost-msg,
@@ -91,7 +96,7 @@
 }
 
 .modal-footer {
-    padding: 15px 15px 15px 15px;
+    padding: 5px 15px 15px 15px;
     text-align: left;
     border-top: 0px;
 }

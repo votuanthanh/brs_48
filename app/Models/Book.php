@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+use Carbon\Carbon;
 
 class Book extends BaseModel
 {
@@ -22,6 +23,7 @@ class Book extends BaseModel
         'slug',
     ];
 
+    protected $dates = ['publish_date'];
     /**
      * Return the sluggable configuration array for this model.
      *
@@ -88,5 +90,16 @@ class Book extends BaseModel
     public function author()
     {
         return $this->belongsTo(Author::class);
+    }
+
+    /**
+     * Get Percent rating book
+     *
+     * @return int
+     */
+    public function computePercentRating()
+    {
+        //number avg x 0.05(%)
+        return (int)($this->avg_rate / config('settings.book.number_rating'));
     }
 }

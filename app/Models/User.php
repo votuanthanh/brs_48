@@ -117,4 +117,45 @@ class User extends Authenticatable
     {
         return $this->hasMany(Like::class);
     }
+
+    /**
+     * Check user is admin
+     *
+     * @return boolean
+     */
+    public function isAdmin()
+    {
+        return $this->role == config('settings.user.role.admin');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            //set role user for register
+            $user->role = config('settings.user.role.member');
+        });
+    }
+
+    /**
+     * Hash the password given
+     *
+     * @param string $password
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
+
+    /**
+     * Get Path Avatar
+     *
+     * @return string
+     */
+    public function avatarPath()
+    {
+        return preg_match('#^(http)|(https).*$#', $this->avatar)
+            ? $this->avatar
+            : asset('uploads/avatar/' . $this->avatar);
+    }
 }

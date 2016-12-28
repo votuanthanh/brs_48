@@ -411,9 +411,13 @@ h1.page-header {
     margin-right:5px;
 }
 
-.panel-body .radio, .checkbox {
+.panel-body .radio {
     display:inline-block;
     margin:15px;
+}
+
+.checkbox input[name="checkbox"] {
+    margin: 0;
 }
 
 .panel-body input[type=checkbox]:checked + label {

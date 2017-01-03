@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Contracts\BookRepositoryInterface;
 
-class HomeController extends Controller
+class HomeController extends BaseController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $categoryRepository;
+    protected $bookRepository;
+
+    public function __construct(CategoryRepositoryInterface $categoryRepository, BookRepositoryInterface $bookRepository)
     {
-        $this->middleware('auth');
+        $this->categoryRepository = $categoryRepository;
+        $this->bookRepository = $bookRepository;
     }
 
     /**
@@ -23,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $this->dataView['booksEachCategory'] = $this->bookRepository->getBookEachCategory();
+        $this->dataView['bookTopRated'] = $this->bookRepository->getTopRatedBook();
+        $this->dataView['categories'] = $this->categoryRepository->all();
+
+        return view('home', $this->dataView);
     }
 }

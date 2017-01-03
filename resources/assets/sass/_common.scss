@@ -21,10 +21,36 @@ body {
                         left: -40px;
                         top: -20px;
                     }
+
+                }
+                .profile-user {
+                    position: relative;
+                    .dropdown-content {
+                        padding: 0;
+                        list-style: none;
+                        top: 20px;
+                        position: absolute;
+                        background-color: #f6f5f1;
+                        display: none;
+                        z-index: 999999;
+                        li a {
+                            font-size: 1.2rem;
+                            color: black;
+                            padding: 8px 10px;
+                            text-decoration: none;
+                            display: block;
+                            width: 115px;
+                            &:hover {
+                                background-color: #f1f1f1;                            }
+                        }
+                    }
+                    .dropdown:hover .dropdown-content {
+                        display: block;
+                    }
                 }
                 a {
                     color: #000;
-                    font-size: 1rem;
+                    font-size: 1.2rem;
                 }
             }
         }
@@ -242,4 +268,16 @@ body {
         clear: both;
         height: 0;
     }
+}
+
+.favorite-book {
+    color: red;
+}
+
+.read-book {
+    color: green;
+}
+
+.reading-book {
+    color: #34648d;
 }

@@ -182,6 +182,7 @@ return [
         Lord\Laroute\LarouteServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Cviebrock\EloquentSluggable\ServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*

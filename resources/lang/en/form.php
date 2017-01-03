@@ -15,6 +15,7 @@ return [
         'accept' => 'Accept',
         'logout' => 'Log out',
         'menu' => 'MENU',
+        'edit_profile' => 'Edit Profile',
     ],
     'heading' => [
         'login_form' => 'Type your username and password.',
@@ -45,6 +46,7 @@ return [
         'name_book' => 'Name Book',
         'date_request' => 'Date Request',
         'request' => 'Action',
+        'profile' => 'Profile',
     ],
     'placeholder' => [
         'email' => 'Enter your email',

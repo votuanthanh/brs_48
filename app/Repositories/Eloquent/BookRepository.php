@@ -84,4 +84,93 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
             ->take(config('settings.book.limit'))
             ->get();
     }
+
+    public function getAllBookPaginate()
+    {
+        return $this->model->with('author')->paginate(10);
+    }
+
+    /**
+     * Data Request for store or update
+     *
+     * @param  array $request
+     * @param  int $id
+     *
+     * @return array
+     */
+    private function dataRequest(array $request, $id = null)
+    {
+        //flag default no update image form book
+        $haveUpdate = false;
+        if (isset($id) && $book = $this->model->find($id)) {
+            //have update image
+            $haveUpdate = true;
+        }
+
+        $fileName = isset($request['image'])
+            ? uploadImage($request['image'], config('settings.book.image_path'), $haveUpdate ? $book->image : null)
+            : ($haveUpdate ? $book->image : config('settings.book.image_deault'));
+
+        $book = [
+            'title' => $request['title'],
+            'author_id' => $request['author'],
+            'category_id' => $request['category'],
+            'description' => $request['description'],
+            'publish_date' => $request['publish_date'],
+            'avg_rate' => $request['score'],
+            'number_of_pages' => $request['pages'],
+            'image' => $fileName,
+        ];
+
+        return $book;
+    }
+
+    /**
+     * Register book
+     *
+     * @param  array $request
+     *
+     * @return mixed
+     */
+    public function create(array $request)
+    {
+        if (!$this->model->create($this->dataRequest($request))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Update a book
+     *
+     * @param  array $request
+     * @param  int $id
+     *
+     * @return bool
+     */
+    public function updateBook(array $request, $id)
+    {
+        if ($this->model->find($id)->update($this->dataRequest($request, $id))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Delete list books
+     *
+     * @param  array $ids
+     *
+     * @return bool
+     */
+    public function deleteAnything(array $ids)
+    {
+        if ($this->model->whereIn('id', $ids)->delete()) {
+            return true;
+        }
+
+        return false;
+    }
 }

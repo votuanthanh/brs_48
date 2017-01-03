@@ -96,7 +96,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function paginate($columns = ['*'], $limit = null)
     {
-        $limit = is_null($limit) ? config('repository.pagination.limit') : $limit;
+        $limit = is_null($limit) ? config('settings.pagination.limit') : $limit;
         return $this->model->paginate($limit, $columns);
     }
 

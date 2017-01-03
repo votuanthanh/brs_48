@@ -41,4 +41,14 @@ class Review extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     *  Get all comment belongs to Reivew
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

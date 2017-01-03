@@ -3,23 +3,23 @@
 namespace App\Repositories\Eloquent;
 
 use App\Repositories\Eloquent\BaseRepository;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Contracts\AuthorRepositoryInterface;
 use Illuminate\Support\Facades\Input;
-use App\Models\Category;
+use App\Models\Author;
 
-class CategoryRepository extends BaseRepository implements CategoryRepositoryInterface
+class AuthorRepository extends BaseRepository implements AuthorRepositoryInterface
 {
     public function model()
     {
-        return Category::class;
+        return Author::class;
     }
 
     /**
-     * Get Option Category for books.
+     * Get Option Author for books.
      *
      * @return array
      */
-    public function optionCategory()
+    public function optionAuthor()
     {
         return $this->model->all()
             ->pluck('name', 'id')

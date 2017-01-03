@@ -23,4 +23,9 @@ return [
         'list' => 'List Books',
         'request' => 'Request Book',
     ],
+    'noty' => [
+        'message' => 'The :item has been :action :status!',
+        'not_found_item' => 'Not Found :item',
+        'delete_all' => 'Please choose :item items to delete!',
+    ],
 ];

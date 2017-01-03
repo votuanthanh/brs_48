@@ -38,7 +38,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function create(array $request)
     {
         $fileName = isset($request['avatar'])
-            ? $this->uploadAvatar()
+            ? uploadImage($request['avatar'], config('settings.user.avatar_path'))
             : config('settings.user.avatar_default');
 
         $user = [
@@ -55,32 +55,5 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         return $createUser;
-    }
-
-    /**
-     * Upload Avatar
-     *
-     * @param  string $oldImage
-     *
-     * @return mixed
-     */
-    public function uploadAvatar($oldImage = null)
-    {
-        $fileAvatar = Input::file('avatar');
-        $destinationPath = config('settings.user.avatar_path');
-
-        //set unique name avatar
-        $fileName = uniqid(time()) . '.' . $fileAvatar->getClientOriginalExtension();
-
-        //move directory folder image
-        Input::file('avatar')->move($destinationPath, $fileName);
-        $imageOldDestinationPath = $destinationPath.$oldImage;
-
-        //delete old image for update avatar
-        if (!empty($oldImage) && file_exists($imageOldDestinationPath)) {
-            File::delete($imageOldDestinationPath);
-        }
-
-        return $fileName;
     }
 }

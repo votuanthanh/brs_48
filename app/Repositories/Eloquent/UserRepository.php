@@ -6,6 +6,7 @@ use App\Repositories\Eloquent\BaseRepository;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Input;
 use App\Models\User;
+use Auth;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -38,7 +39,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function create(array $request)
     {
         $fileName = isset($request['avatar'])
-            ? $this->uploadAvatar()
+            ? uploadImage($request['avatar'], config('settings.user.avatar_path'))
             : config('settings.user.avatar_default');
 
         $user = [
@@ -58,29 +59,134 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
     /**
-     * Upload Avatar
+     * Update Profile's User
      *
-     * @param  string $oldImage
+     * @param  array   $data
+     * @param  int  $id
+     * @param  boolean $withSoftDeletes
+     * @return bool
+     */
+    public function update(array $data, $id, $withSoftDeletes = false)
+    {
+        $currentUser = $this->getCurrentUser();
+
+        if (!$data['password']) {
+            unset($data['password']);
+        }
+
+        $oldImage = $currentUser->avatar;
+        $data['avatar'] = isset($data['avatar'])
+            ? uploadImage($data['avatar'], config('settings.user.avatar_path'), $oldImage)
+            : $oldImage;
+
+        return $this->model->find($id)->update($data);
+    }
+
+    /**
+     * Search User
+     *
+     * @param  string $item
      *
      * @return mixed
      */
-    public function uploadAvatar($oldImage = null)
+    public function searchUser($item)
     {
-        $fileAvatar = Input::file('avatar');
-        $destinationPath = config('settings.user.avatar_path');
-
-        //set unique name avatar
-        $fileName = uniqid(time()) . '.' . $fileAvatar->getClientOriginalExtension();
-
-        //move directory folder image
-        Input::file('avatar')->move($destinationPath, $fileName);
-        $imageOldDestinationPath = $destinationPath.$oldImage;
-
-        //delete old image for update avatar
-        if (!empty($oldImage) && file_exists($imageOldDestinationPath)) {
-            File::delete($imageOldDestinationPath);
+        $users =  $this->model->search($item)
+            ->with('following', 'followers')
+            ->get();
+        if ($users->count()) {
+            foreach ($users as $user) {
+                $response[] =[
+                    'status' => true,
+                    'suggest' => $user->name,
+                    'view' => view('web.search.user', compact('user'))->render(),
+                ];
+            }
+            return $response;
         }
 
-        return $fileName;
+        return false;
+    }
+
+    /**
+     * Set Relationship User
+     *
+     * @param  int $idUser
+     * @return bool
+     */
+    public function handleRelationUser($idUser)
+    {
+        if (!$idUser) {
+            return false;
+        }
+
+        $user = $this->model->find($idUser);
+        $userCurrent = $this->getCurrentUser();
+
+        if ($userCurrent->following->contains('id', $idUser)) {
+            $userCurrent->following()->detach($idUser);
+
+            return false;
+        }
+
+        $userCurrent->following()->attach($idUser);
+
+        return true;
+    }
+
+    /**
+     * Creat new a request book from user
+     *
+     * @param  array $inputs
+     * @return Collection
+     */
+    public function createRequestBook($inputs)
+    {
+        $idUser = $inputs['user_id'];
+        $data = [
+            'book_name' => $inputs['book_name'],
+            'description' => $inputs['description'],
+            'is_accepted' => false,
+        ];
+
+        return $this->model->find($inputs['user_id'])
+            ->requestBooks()
+            ->create($data);
+    }
+
+    /**
+     * Delete Request Book
+     *
+     * @param  array $inputs
+     * @return bool
+     */
+    public function cancelRequestBook($inputs)
+    {
+        $idUser = $inputs['idUser'];
+
+        $idBookRequest = $inputs['idRequest'];
+
+        return $this->model->find($idUser)
+            ->requestBooks()
+            ->where('user_id', $idUser)
+            ->where('id', $idBookRequest)
+            ->delete();
+    }
+
+    public function deleteAnything($users)
+    {
+        $admin = $this->model->where('role', config('settings.user.role.admin'))
+            ->first();
+        $listUser = $users['users'];
+
+        if (in_array($admin->id, $users['users'])) {
+            return false;
+        }
+
+        $this->model->whereIn('id', $listUser)->get()->each(function ($user) {
+            $user->delete();
+        });
+
+        return true;
     }
 }

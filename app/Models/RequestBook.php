@@ -23,4 +23,28 @@ class RequestBook extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get status request book
+     *
+     * @return boolean
+     */
+    public function isCheckAccepted()
+    {
+        return $this->is_accepted
+            ? config('settings.request_book.accepted')
+            : config('settings.request_book.not_accept');
+    }
+
+    /**
+     * Get request book accecpted
+     *
+     * @param  $query
+     *
+     * @return Illuminate\Database\Query\Builder
+     */
+    public function scopeAccepted($query)
+    {
+        return $query->whereIsAccepted(true);
+    }
 }

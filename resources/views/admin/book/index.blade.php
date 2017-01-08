@@ -2,100 +2,106 @@
 
 @section('title', 'Admin')
 
-@section('style')
-    {{ Html::style('bower/raty/lib/jquery.raty.css') }}
-@endsection
-
 @section('content')
-<a href="#" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> {{ trans('form.button.add_new') }}</a>
-<a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> {{ trans('form.button.delete_all') }}</a>
+<a href="{{ action('Admin\BookController@create') }}" class="btn btn-success">
+    <span class="glyphicon glyphicon-plus"></span>
+    {{ trans('form.button.add_new') }}
+</a>
+<a href="javascript:void(0)" class="btn btn-danger" id="delete-anything-book">
+    <span class="glyphicon glyphicon-trash"></span>
+    {{ trans('form.button.delete_all') }}
+</a>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book.list') }}
+        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book_list') }}
     </div>
     <div class="panel-body book-wrapper">
         {!! Form::open([
-            'method' => 'POST',
+            'method' => 'post',
+            'id' => 'delete-anything-book-form',
+            'action' => 'Admin\BookController@deleteAnything',
         ]) !!}
             <table class="table table-hover">
-                <tr>
-                    <td>
-                        {{ Form::checkbox('user', 2, 0, ['id' => 'checkbox-all']) }}
-                    </td>
-                    <td>{{ trans('form.label.image') }}</td>
-                    <td>{{ trans('form.label.author') }}</td>
-                    <td>{{ trans('form.label.title') }}</td>
-                    <td>{{ trans('form.label.description') }}</td>
-                    <td>{{ trans('form.label.publish_date') }}</td>
-                    <td>{{ trans('form.label.point') }}</td>
-                    <td>{{ trans('form.label.pages') }}</td>
-                    <td>{{ trans('form.label.action') }}</td>
-                </tr>
-                <tr>
-                    <td>{{ Form::checkbox('book[]') }}</td>
-                    <td>Tsadsa</td>
-                    <td>Author</td>
-                    <td class="td-title">dsa dsadsad dsad asd asd sad sa</td>
-                    <td class="td-description">dsa dsadsad sadsad sadsad sadsad sadsad sadsad sadsad sadsad sadsad sadsad</td>
-                    <td>20/10/2016 AM</td>
-                    <td>
-                        <div class="rating-container rating-md rating-animate">
-                            <div class="rating">
-                                <span class="empty-stars">
-                                    <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
-                                </span>
-                                <span class="filled-stars" style="width: 85%;">
-                                    <span class="star"><i class="glyphicon glyphicon-star"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star"></i></span>
-                                    <span class="star"><i class="glyphicon glyphicon-star"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                        (5.6)
-                    </td>
-                    <td>555</td>
-                    <td>
-                        <a href="#" data-toggle="modal" data-target="#edit-book">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                        <a href="http://www.jquery2dotnet.com" class="trash">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </a>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>
+                            {{ Form::checkbox('bookAll', null, 0, ['id' => 'checkbox-all']) }}
+                        </th>
+                        <th>{{ trans('form.label.image') }}</th>
+                        <th>{{ trans('form.label.author') }}</th>
+                        <th>{{ trans('form.label.title') }}</th>
+                        <th>{{ trans('form.label.description') }}</th>
+                        <th>{{ trans('form.label.publish_date') }}</th>
+                        <th>{{ trans('form.label.point') }}</th>
+                        <th>{{ trans('form.label.pages') }}</th>
+                        <th>{{ trans('form.label.action') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($books as $book)
+                        <tr>
+                            <td>{{ Form::checkbox('idBooks[]', $book->id) }}</td>
+                            <td class="td-image">
+                                <img src="{{ asset('images/book/'.$book->image) }}" alt="image book">
+                            </td>
+                            <td>{{ $book->author->name }}</td>
+                            <td class="td-title">{{ $book->title }}</td>
+                            <td class="td-description">{{ mb_strimwidth($book->description, 0, 50, '...') }}</td>
+                            <td>{{ $book->publish_date->format('m-d-y A') }}</td>
+                            <td>
+                                <div class="rating-container rating-md rating-animate">
+                                    <div class="rating">
+                                        <span class="empty-stars">
+                                            <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star-empty"></i></span>
+                                        </span>
+                                        <span class="filled-stars" style="width: {{ $book->computePercentRating() }}%;">
+                                            <span class="star"><i class="glyphicon glyphicon-star"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star"></i></span>
+                                            <span class="star"><i class="glyphicon glyphicon-star"></i></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                ({{ $book->avg_rate }})
+                            </td>
+                            <td>{{ $book->number_of_pages }}</td>
+                            <td class="frm-del">
+                                <a href="javascript:void(0)" data-toggle="modal" class="edit-book" data-id="{{ $book->id }}">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                {!! Form::close() !!}
+                                {!! Form::open(['action' => ['Admin\BookController@destroy', $book->id],
+                                    'method' => 'delete',
+                                    'class' => 'delete-book-form'
+                                ]) !!}
+                                    <a href="javascript:void(0)" class="trash del-book">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                {!! Form::close() !!}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         {!! Form::close() !!}
     </div>
     <div class="panel-footer">
         <div class="row">
             <div class="col-md-6">
-                <h6>{{ trans('form.heading.total_count') }}<span class="label label-info">25</span></h6>
+                <h6>{{ trans('form.heading.total_count') }}<span class="label label-info">{{ $books->total() }}</span></h6>
             </div>
             <div class="col-md-6">
-                <ul class="pagination pagination-sm pull-right">
-                    <li class="disabled"><a href="javascript:void(0)">«</a></li>
-                    <li class="active"><a href="javascript:void(0)">1
-                        <span class="sr-only">{{ trans('common.text.current') }}</span>
-                        </a>
-                    </li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="javascript:void(0)">»</a></li>
-                </ul>
+                <div class="pull-right pagination-sm">
+                    {{ $books->links() }}
+                </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('script')
-    {{ Html::script('bower/raty/lib/jquery.raty.js') }}
+<div class="wrapper-modal"></div>
 @endsection

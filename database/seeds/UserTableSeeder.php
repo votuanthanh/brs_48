@@ -14,6 +14,8 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         //Get all id of books
+        factory(User::class, 'admin', 1)->create(['email' => 'admin@gmail.com', 'role' => 1]);
+
         $idBooks = Book::all()->pluck('id')->toArray();
 
         factory(User::class, 15)->create()
@@ -24,15 +26,14 @@ class UserTableSeeder extends Seeder
                     $idsAttach = $this->getRandomValueArray($idBooks, $numberIdUsersRand);
                     $user->favoriteBooks()->attach($idsAttach);
 
-                    if (rand(0, 4)) {
-                        //Add read or reading book of user
-                        $user->readingBooks()->attach($this->addPivotForReadingBooks($idsAttach));
-                        //Add review books
-                        $user->reviewBooks()->attach($this->addReviewBook($idsAttach));
-                    }
+                    // if (rand(0, 4)) {
+                    //     //Add read or reading book of user
+                    //     //Add review books
+                    // }
+                    $user->readingBooks()->attach($this->addPivotForReadingBooks($idsAttach));
+                    $user->reviewBooks()->attach($this->addReviewBook($idsAttach));
                 }
             });
-        factory(User::class, 'role')->create(['email' => 'admin@gmail.com']);
     }
 
     /**
@@ -78,7 +79,7 @@ class UserTableSeeder extends Seeder
             $result[$key] = [
                 'title' => $faker->sentence(rand(4, 8)),
                 'content' => $faker->paragraph(3, true),
-                'star' => rand(0, 5),
+                'star' => rand(1, 5),
             ];
         }
         return $result;

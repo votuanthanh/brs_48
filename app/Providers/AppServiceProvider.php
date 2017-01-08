@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Auth;
+use Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        view()->composer('*', function ($view) {
+            $view->with('authUser', Auth::user());
+        });
+
+        Blade::directive('switch', function ($condition) {
+            return '<?php switch (' . $condition . ') { ';
+        });
+
+        Blade::directive('firstcase', function ($value) {
+            return 'case '. $value . ':  ?>';
+        });
+
+        Blade::directive('case', function ($value) {
+            return '<?php  case ' . $value . ':  ?>';
+        });
+
+        Blade::directive('breakcase', function () {
+            return '<?php break; ?>';
+        });
+
+        Blade::directive('whatever', function () {
+            return '<?php default : ?>';
+        });
+
+        Blade::directive('endswitch', function () {
+            return '<?php }  ?>';
+        });
     }
 
     /**

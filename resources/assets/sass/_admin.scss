@@ -454,8 +454,41 @@ h1.page-header {
     .td-description {
         width: 200px;
     }
+    .td-image img{
+        max-width: 100px;
+        height: 100px;
+    }
 }
 //create manager book admin
 .book-create-wrapper {
     padding: 20px 60px 10px 5px;
+}
+
+#note {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    right: 0;
+    opacity: 0.9;
+    font-weight: bold;
+    border-radius: 0;
+    display: inline-block;
+    -webkit-transform: translateY(-87px);
+    -webkit-animation: slideDown 7s 2s 1 ease forwards;
+    -moz-transform:    translateY(-50px);
+    -moz-animation:    slideDown 7s 2s 1 ease forwards;
+}
+
+@-webkit-keyframes slideDown {
+    0%, 100% { -webkit-transform: translateY(-87px); }
+    10%, 90% { -webkit-transform: translateY(0px); }
+}
+
+@-moz-keyframes slideDown {
+    0%, 100% { -moz-transform: translateY(-87px); }
+    10%, 90% { -moz-transform: translateY(0px); }
+}
+
+#delete-anything-book-form table tr td.frm-del form {
+    float: right;
 }

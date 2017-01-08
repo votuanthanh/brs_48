@@ -29,4 +29,9 @@ class Comment extends BaseModel
     {
         return $this->morphMany(Like::class, 'target');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -12,20 +12,18 @@
 */
 
 $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
-    static $password;
-
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'role' => 0,
         'avatar' => 'http://gravatar.com/avatar/' . md5(strtolower(trim($faker->email))) . '?s=200&d=wavatar',
-        'password' => $password ?: $password = bcrypt('123123'),
+        'password' => '123123',
         'remember_token' => str_random(10),
     ];
 });
 
-$factory->defineAs(App\Models\User::class, 'role', function ($faker) use ($factory) {
+$factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($factory) {
     $post = $factory->raw('App\Models\User');
 
-    return array_merge($post, ['role' => 1]);
+    return array_merge($post);
 });

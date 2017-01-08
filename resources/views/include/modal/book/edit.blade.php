@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" align="center">
-                <img class="img-circle" id="img_logo" src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTZo5UvQd2On8xYYGXT65ZhnEh4ACw-EIJc-FD7ZCFjwf7yyDrh">
+                <img class="img-circle" id="img_logo" src="http://recruit.framgia.vn/wp-content/uploads/2016/06/framgia-logo-black-1.png">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>

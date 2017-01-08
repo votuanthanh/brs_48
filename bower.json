@@ -16,6 +16,10 @@
     "tests"
   ],
   "dependencies": {
-    "raty": "^2.7.1"
+    "raty": "^2.7.1",
+    "jquery-confirm": "^2.7.0",
+    "noty": "^2.3.11",
+    "bootstrapvalidator": "bootstrapValidator#^0.5.3",
+    "typeahead.js": "^0.11.1"
   }
 }

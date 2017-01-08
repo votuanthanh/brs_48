@@ -59,7 +59,7 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
-
-        return redirect()->guest('login');
+        flash(trans('common.noty.user.no_access_admin'), 'danger');
+        return redirect()->guest(action('HomeController@index'));
     }
 }

@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Nicolaslopezj\Searchable\SearchableTrait;
+use File;
 
 class User extends Authenticatable
 {
     use Notifiable;
+    use SearchableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +33,25 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    /**
+     * Searchable rules.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        /**
+         * Columns and their priority in search results.
+         * Columns with higher values are more important.
+         * Columns with equal values have equal importance.
+         *
+         * @var array
+         */
+        'columns' => [
+            'users.name' => 10,
+            'users.email' => 10,
+        ],
     ];
 
     /**
@@ -119,6 +141,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Define a user to many likes from review and review of comments that books
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
      * Check user is admin
      *
      * @return boolean
@@ -131,6 +163,38 @@ class User extends Authenticatable
     protected static function boot()
     {
         parent::boot();
+
+        //before delete() method call this
+        static::deleting(function ($user) {
+            $user->load('reviews.comments');
+            //delete request book of user
+            $user->requestBooks()->delete();
+
+            //delete read or reading book of user
+            $user->readingBooks()->detach();
+
+            //delete favorite book
+            $user->favoriteBooks()->detach();
+
+            //delete users following
+            $user->following()->detach();
+
+            //delete followers
+            $user->followers()->detach();
+
+            //delete comments
+            $user->comments()->delete();
+
+            //delete reivew
+            $user->reviews()->delete();
+
+            //delete likes
+            $user->likes()->delete();
+
+            //delete image
+            deleteImage(config('settings.user.avatar_path'), $user->avatar);
+        });
+
         static::creating(function ($user) {
             //set role user for register
             $user->role = config('settings.user.role.member');
@@ -156,6 +220,6 @@ class User extends Authenticatable
     {
         return preg_match('#^(http)|(https).*$#', $this->avatar)
             ? $this->avatar
-            : asset('uploads/avatar/' . $this->avatar);
+            : asset('images/avatar/' . $this->avatar);
     }
 }

@@ -16,9 +16,9 @@ use App\Models\Author;
 $factory->define(App\Models\Book::class, function (Faker\Generator $faker) {
     return [
         'title' => str_replace('.', '', $faker->sentence(rand(4, 8))),
-        'description' => $faker->paragraph(3, true),
+        'description' => $faker->paragraph(35, true),
         'publish_date' => $faker->dateTimeBetween('-10 years', 'now'),
-        'image' => config('settings.book.image_deault'),
+        'image' => 'book_default_' . rand(0, 14) . '.jpg',
         'number_of_pages' => rand(100, 300),
         'avg_rate' => round(rand(10, 50) / 10, 2),
         'category_id' => function () {

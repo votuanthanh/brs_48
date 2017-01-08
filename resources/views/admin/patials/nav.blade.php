@@ -12,7 +12,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ action('Admin\BookController@index') }}">
                 {{ trans('common.text.admin') }}
             </a>
         </div>
@@ -22,12 +22,24 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown ">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <img src="http://gravatar.com/avatar/0dae0db72491a82c1d51bad6da956d7e?s=200&d=wavatar" width="25" height="25">
-                        user.auth.name
+                        <img src="{{ $authUser->avatarPath() }}" width="25" height="25">
+                            {{ $authUser->name }}
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#"><i class="glyphicon glyphicon-log-out"></i>{{ trans('form.button.logout') }}</a></li>
+                        <li>
+                            <a href="#" id="logout-submit">
+                                <i class="glyphicon glyphicon-log-out"></i>
+                                {{ trans('form.button.logout') }}
+                                {!! Form::open([
+                                    'action' => 'Auth\LoginController@logout',
+                                    'method' => 'POST',
+                                    'role' => 'form',
+                                    'id' => 'form-logout',
+                                ]) !!}
+                                {!! Form::close() !!}
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

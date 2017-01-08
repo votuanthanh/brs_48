@@ -1,40 +1,46 @@
-<!-- Begin | Register Form -->
+<!-- Begin | Edit User Form -->
 {!! Form::open([
-    'method' => 'POST',
-    'id' => 'update-register-form',
+    'action' => ['Web\UserController@update', $authUser->id],
+    'method' => 'PUT',
+    'id' => 'edit-user-form',
+    'files' => true,
 ]) !!}
     <div class="modal-body">
         <div id="div-register-msg">
             <div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
-            <span id="text-register-msg">{{ trans('form.heading.update_user') }}</span>
+            <span id="text-register-msg">{{ trans('form.heading.edit_user') }}</span>
         </div>
-        {!! Form::text('name', null, [
-            'class' => 'form-control',
-            'placeholder' => trans('form.placeholder.name'),
-            'autofocus',
-            'required',
-        ]) !!}
-        {!! Form::email('email', null, [
-            'class' => 'form-control',
-            'placeholder' => trans('form.placeholder.email'),
-            'autofocus',
-            'required',
-        ]) !!}
-        {!! Form::password('password', [
-            'class' => 'form-control',
-            'placeholder' => trans('form.placeholder.password'),
-            'required',
-        ]) !!}
-        {!! Form::password('password_confirmation', [
-            'class' => 'form-control',
-            'placeholder' => trans('form.placeholder.confirm_password'),
-            'required',
-        ]) !!}
-        {!! Form::file('avatar') !!}
+        <div class="form-group">
+            {!! Form::text('name', $authUser->name, [
+                'class' => 'form-control',
+                'placeholder' => trans('form.placeholder.name'),
+            ]) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::email('email', $authUser->email, [
+                'class' => 'form-control',
+                'placeholder' => trans('form.placeholder.email'),
+            ]) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::password('password', [
+                'class' => 'form-control',
+                'placeholder' => trans('form.placeholder.password'),
+            ]) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::password('password_confirmation', [
+                'class' => 'form-control',
+                'placeholder' => trans('form.placeholder.confirm_password'),
+            ]) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::file('avatar') !!}
+        </div>
     </div>
     <div class="modal-footer">
         <div>
-            {!! Form::submit(trans('form.button.update'), ['class' => 'btn btn-primary btn-lg btn-block']) !!}
+            {!! Form::submit(trans('form.button.register'), ['class' => 'btn btn-primary btn-lg btn-block']) !!}
         </div>
     </div>
 {!! Form::close() !!}

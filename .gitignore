@@ -5,21 +5,10 @@ node_modules/
 bootstrap/compiled.php
 app/storage/
 
-# Laravel 5 & Lumen specific
-bootstrap/cache/
-.env.*.php
-.env.php
-.env
-
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
 
 # Front-end library
-bower_components/
 public/js/
 public/css/
-public/fonts/
-public/images/
-public/plugins/
 public/bower/
-public/images/

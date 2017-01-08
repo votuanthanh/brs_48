@@ -9,14 +9,16 @@
             @foreach($booksEachCategory as $data)
                 <header>
                     <h1>{{ $data['name_category'] }}</h1>
-                    <a href="#">{{ trans('common.text.view_more') }}</a>
+                    <a href="{{ action('Web\SearchController@handleSearch', ['category' => $data['name_category']]) }}">
+                        {{ trans('common.text.view_more') }}
+                    </a>
                 </header>
                 <div class="row">
                     @foreach($data['datas'] as $dataBook)
                         <div class="col col-md-4">
                             <!--START: INNER PRODUCT -->
                             <div class="product-inner">
-                                <a href="#">
+                                <a href="{{ action('Web\BookController@index',['slug' => $dataBook['book']->slug]) }}">
                                     <div class="product-image-box">
                                         <img src="{{ asset('images/book/'.$dataBook['book']->image) }}">
                                     </div>
@@ -25,21 +27,29 @@
                                         <span>{{ $dataBook['book']->author->name }}</span>
                                     </div>
                                 </a>
-                                <div class="woo-wrapper-button">
-                                    @if (auth()->check())
-                                        <a href="#">
-                                            <span class="glyphicon glyphicon-heart
-                                                {{ $dataBook['is_favorite'] ? 'favorite-book' : '' }}">
-                                            </span>{{ trans('common.text.like') }}
-                                        </a>
-                                        <a href="#">
-                                            <span class="glyphicon glyphicon-check
-                                                {{ isset($dataBook['is_read'])
-                                                    ? ($dataBook['is_read'] ? 'read-book' : 'reading-book')
-                                                    : '' }}">
-                                            </span>{{ trans('common.text.read') }}
-                                        </a>
-                                    @endif
+                                <div class="woo-wrapper-button" data-id="{{ $dataBook['book']->id }}">
+                                    <a href="javascript:void(0)" class="{{ attrUser('add-favorite-book') }}"
+                                        {{ modalLogin() }}>
+                                        <span class="glyphicon glyphicon-heart
+                                            {{ $dataBook['is_favorite'] ? 'favorite-book tooltip-remove' : 'tooltip-add' }}">
+                                        </span>
+                                    </a>
+                                    <a href="javascript:void(0)" {{ modalLogin() }} class="add-status-read-book"
+                                        data-status="1">
+                                        <span class="glyphicon glyphicon-check
+                                            {{ isset($dataBook['is_read'])
+                                                ? ($dataBook['is_read'] ? 'read-book remove-read-book' : 'add-read-book')
+                                                : '' }}">
+                                        </span>
+                                    </a>
+                                    <a href="javascript:void(0)" {{ modalLogin() }} class="add-status-read-book"
+                                        data-status = "0">
+                                        <span class="glyphicon glyphicon-eye-open
+                                            {{ isset($dataBook['is_read'])
+                                                ? ($dataBook['is_read'] ? 'add-reading-book' : 'reading-book remove-reading-book')
+                                                : '' }}">
+                                        </span>
+                                    </a>
                                 </div>
                             </div>
                             <!--END: INNER PRODUCT -->
@@ -57,7 +67,7 @@
         <div class="inner-top-book">
             @foreach($bookTopRated as $book)
                 <div class="book-rated-box">
-                    <a href="#">
+                    <a href="{{ action('Web\BookController@index',['slug' => $book->slug]) }}">
                         <img src="{{ asset('images/book/'.$dataBook['book']->image) }}">
                         <div class="detail-rated-book">
                             <h5 class="title-book">{{ $book->title }}</h5>
@@ -94,14 +104,16 @@
         <div class="category-box">
             <ul>
                 @foreach($categories as $category)
-                    <li><a href="#"><i class="glyphicon glyphicon-triangle-right"></i>{{ $category->name }}</li></a>
+                    <li>
+                        <a href="{{ action('Web\SearchController@handleSearch', ['category' => $category->name]) }}">
+                            <i class="glyphicon glyphicon-triangle-right"></i>
+                            {{ $category->name }}
+                        </a>
+                    </li>
                 @endforeach
             </ul>
         </div>
     </div>
     <!--END: END SIDEBAR RIGHT -->
-</div>
-<div id="wrapper-modal-auth">
-    @include('include.modal.user.auth')
 </div>
 @endsection

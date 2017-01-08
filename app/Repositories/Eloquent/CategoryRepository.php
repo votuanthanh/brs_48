@@ -13,4 +13,16 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     {
         return Category::class;
     }
+
+    /**
+     * Get Option Category for books.
+     *
+     * @return array
+     */
+    public function optionCategory()
+    {
+        return $this->model->all()
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 }

@@ -1,5 +1,5 @@
 <!-- BEGIN # MODAL LOGIN -->
-<div class="modal fade {{ session('flash_notification.message') || count($errors) > 0 ? 'auth-modal' : '' }}"
+<div class="modal fade {{ count($errors) > 0 ? 'auth-modal' : '' }}"
     id="auth-modal" tabindex="-1"
     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -13,11 +13,16 @@
 
             <!-- Begin # DIV Form -->
             <div id="div-forms">
-                @include('include.message')
-                <!--Login Form -->
-                @include('include.form.user.login')
-                <!-- Register Form-->
-                @include('include.form.user.register')
+                @if(!auth()->check())
+                    <!--Login Form -->
+                    @include('include.form.user.login')
+
+                    <!-- Register Form-->
+                    @include('include.form.user.register')
+                @else
+                    <!-- Edit Form-->
+                    @include('include.form.user.edit')
+                @endif
             </div>
             <!-- End # DIV Form -->
         </div>

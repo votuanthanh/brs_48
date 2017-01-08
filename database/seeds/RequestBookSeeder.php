@@ -12,6 +12,6 @@ class RequestBookSeeder extends Seeder
      */
     public function run()
     {
-        factory(RequestBook::class, 10)->create();
+        factory(RequestBook::class, 100)->create();
     }
 }

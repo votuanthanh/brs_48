@@ -30,6 +30,11 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
         return $eagerLoading;
     }
 
+    /**
+     * Get Book Each Category
+     *
+     * @return array $data
+     */
     public function getBookEachCategory()
     {
         $allbook = $this->getAllBookWith()->get()->sortBy('category_id');
@@ -85,9 +90,14 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
             ->get();
     }
 
+    /**
+     * Get All Book Paginate
+     *
+     * @return pagination
+     */
     public function getAllBookPaginate()
     {
-        return $this->model->with('author')->paginate(10);
+        return $this->model->with('author')->paginate();
     }
 
     /**
@@ -167,10 +177,226 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
      */
     public function deleteAnything(array $ids)
     {
-        if ($this->model->whereIn('id', $ids)->delete()) {
-            return true;
+        if (!$ids) {
+            return false;
+        }
+
+        $this->model->whereIn('id', $ids)->get()->each(function ($book) {
+            $book->delete();
+        });
+
+        return true;
+    }
+
+    /**
+     * Search Book
+     *
+     * @param  string $item
+     *
+     * @return mixed
+     */
+    public function searchBook($item)
+    {
+        $books =  $this->model->search($item)->get();
+
+        if ($books->count()) {
+            foreach ($books as $book) {
+                $response[] =[
+                    'status' => true,
+                    'suggest' => $book->title,
+                    'view' => view('web.search.book', compact('book'))->render(),
+                ];
+            }
+            return $response;
         }
 
         return false;
+    }
+
+    public function findBySlug($slug)
+    {
+        return $this->model->findBySlug($slug);
+    }
+
+    /**
+     * Check read or reading book of user current
+     *
+     * @param Illuminate\Database\Eloquent\Collection $book
+     * @param int $idUser
+     *
+     * @return mixed
+     */
+    private function readOrReadingOfUser($book, $idUser = null)
+    {
+        if (auth()->check()
+            && $user = $book->readingUsers
+                ->where('id', isset($idUser) ? $idUser : auth()->user()->id)
+                ->first()
+        ) {
+            return $user->pivot->is_completed;
+        }
+
+        return null;
+    }
+
+    /**
+     * Compute Percent For Book
+     *
+     * @param Illuminate\Database\Eloquent\Collection $book
+     *
+     * @return mixed
+     */
+    private function percentEachReviewBook($book)
+    {
+        $reviews = $book->reviews()->select('star', \DB::raw('count(star) as count'))
+            ->groupBy('star')
+            ->get();
+
+        $totalStar = array_sum($reviews->pluck('count')->toArray());
+        $fiveStar = collect([1, 2, 3, 4, 5]);
+        $listStar = $reviews->pluck('star');
+
+        //diff star
+        $notExistStar = $fiveStar->diff($listStar);
+
+        //set earch star if user not review
+        if ($notExistStar->count()) {
+            foreach ($notExistStar as $value) {
+                $data[$value] = [
+                    'countRewiewer' => 0,
+                    'percentStar' => 0,
+                ];
+            }
+        }
+
+        foreach ($reviews as $review) {
+            $data[$review->star] = [
+                'countRewiewer' => $review->count,
+                'percentStar' => round(($review->count / $totalStar) * 100),
+            ];
+        }
+
+        if (!$data) {
+            return null;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Compute Rating Avg
+     *
+     * @param  array $data
+     *
+     * @return float
+     */
+    private function avgRate($data)
+    {
+        if (!$data) {
+            return 0;
+        }
+        //compute avg star
+        $sum = $totalStar = 0;
+        foreach ($data as $star => $value) {
+            $sum += $star * $value['countRewiewer'];
+            $totalStar += $value['countRewiewer'];
+        }
+
+        return round($sum / $totalStar, 1);
+    }
+
+    /**
+     * Set data for view
+     * @param  string $slug
+     * @return array
+     */
+    public function dataForView($slug)
+    {
+        // search book where slug field
+        $book = $this->findBySlug($slug)
+            ->load(
+                'reviews.comments.user',
+                'reviews.likes',
+                'reviews.user'
+            );
+
+        //show percent review
+        $data['counter'] = $this->percentEachReviewBook($book);
+        krsort($data['counter']);
+
+        //update avg rate current for book
+        $book->update(['avg_rate' => $this->avgRate($data['counter'])]);
+
+        // data book
+        $data['item'] = [
+            'book' => $book,
+            'statusBook' => $this->readOrReadingOfUser($book),
+        ];
+
+        return $data;
+    }
+
+    /**
+     * [Ajax] get status updated
+     * @param  int $id
+     * @return bool
+     */
+    public function statusFavoriteBook($id)
+    {
+        $book = $this->model->find($id);
+
+        $idRelatedUser = $book->getUserFavoriteIds();
+        $idUserCurrent = $this->getCurrentUser()->id;
+
+        if ($idRelatedUser->contains($idUserCurrent)) {
+            $book->favoriteUsers()->detach($idUserCurrent);
+            return false;
+        }
+
+        $book->favoriteUsers()->attach($idUserCurrent);
+        return true;
+    }
+
+    /**
+     * Set Read Or Reading Book
+     *
+     * @param int $id
+     * @param bool $status
+     * @return boolean
+     */
+    public function setReadOrReadingBook($id, $status)
+    {
+        $book = $this->model->find($id);
+
+        return $this->updateStatusBook($this->readOrReadingOfUser($book), $status, $book);
+    }
+
+    /**
+     * Update Status Book
+     *
+     * @param  mixed $statusCurrentBook
+     * @param  bool $status
+     * @param  Collection $book
+     * @return bool
+     */
+    private function updateStatusBook($statusCurrentBook, $status, $book)
+    {
+        $idUserCurrent = $this->getCurrentUser()->id;
+
+        if (isset($statusCurrentBook)) {
+            //When is_complete current book different status request user to update status book
+            if ($statusCurrentBook != $status) {
+                $book->readingUsers()->syncWithoutDetaching([$idUserCurrent => ['is_completed' => $status]]);
+
+                return true;
+            }
+            $book->readingUsers()->detach($idUserCurrent);
+
+            return false;
+        }
+
+        $book->readingUsers()->attach([$idUserCurrent => ['is_completed' => $status]]);
+
+        return true;
     }
 }

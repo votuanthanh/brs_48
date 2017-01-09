@@ -64,21 +64,17 @@ class RequestBookController extends BaseController
     {
         if ($request->has('requestBook') && $listId = $request->get('requestBook')) {
             if ($this->requestBookRepository->deleteMany($listId)) {
-                flashMessage(
-                    trans('common.text.book'),
-                    trans('common.text.deleted'),
-                    trans('common.text.success')
-                );
+                flash(trans('common.noty.book.request.delete.success'), 'success');
+
                 return back();
             }
+            flash(trans('common.noty.book.request.delete.fail'), 'danger');
+
+            return back();
         }
 
-        flashMessage(
-            trans('common.text.book'),
-            trans('common.text.deleted'),
-            trans('common.text.fail'),
-            'danger'
-        );
+        flash(trans('common.noty.book.request.delete.fail'), 'danger');
+
         return back();
     }
 }

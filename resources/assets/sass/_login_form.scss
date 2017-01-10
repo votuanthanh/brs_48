@@ -5,8 +5,11 @@
     }
 }
 
-.modal-body input, .input-group, textarea[name=description] {
-    margin-top: 10px;
+#edit-book .modal-dialog {
+    width: 500px;
+}
+
+.modal-body {
     input.combobox {
         margin: 0;
     }

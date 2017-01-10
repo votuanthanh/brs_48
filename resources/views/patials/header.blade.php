@@ -2,8 +2,8 @@
 <header class="main-header">
     <section class="inner-header">
         <div class="container">
-            <a href="#">
-                <img src="{{ asset('images/logo/book-logo.png') }}" alt="logo">
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('images/framgia_logo.png') }}" alt="logo">
             </a>
             <div class="header-login">
                 <div class="your-welcome">
@@ -12,11 +12,24 @@
                 @if (auth()->check() && auth()->user())
                     <div class="profile-user">
                         <div class="dropdown">
-                            <a href="javascript:void(0)" class="name-user">{{ auth()->user()->name }}  <span class="caret"></span></a>
+                            <a href="javascript:void(0)" class="name-user">{{ auth()->user()->name }}
+                                <span class="caret"></span>
+                            </a>
                             <ul class="dropdown-content">
                                 <li>
-                                    <a href="#"><span class="glyphicon glyphicon-user"></span> {{ trans('form.label.profile') }}</a>
+                                    <a href="{{ action('Web\UserController@show', ['id' => auth()->user()->id]) }}">
+                                        <span class="glyphicon glyphicon-user"></span>
+                                        {{ trans('form.label.profile') }}
+                                    </a>
                                 </li>
+                                @if($authUser->role)
+                                    <li>
+                                        <a href="{{ action('Admin\BookController@index') }}">
+                                            <span class="glyphicon glyphicon-log-in"></span>
+                                            {{ trans('form.label.go_to_admin') }}
+                                        </a>
+                                    </li>
+                                @endif
                                 <li>
                                     <a id="logout-submit" href="#">
                                         <span class="glyphicon glyphicon-log-out"></span>
@@ -44,23 +57,22 @@
                 @endif
             </div>
             <div class="clearfix"></div>
-        </div>
-        <div class="search-bar">
-            <div class="row">
-                <div class="col col-sm-7 col-sm-offset-3">
-                    {!! Form::open([
-                        'method' => 'POST',
-                        'class' => 'form-inline',
-                        'role' => 'form',
-                    ]) !!}
-                        {!! Form::text('search', null, [
-                                'class' => 'form-control',
-                                'autofocus',
+            <div class="search-bar">
+                <div class="row">
+                    <div class="col col-sm-6 wrp-form-search">
+                        {!! Form::open([
+                            'action' => ['Web\SearchController@handleSearch'],
+                            'method' => 'get',
+                            'role' => 'form',
+                            'id' => 'search-book-typehead',
                         ]) !!}
-                        <button type="submit" class="btn btn-default">
-                            <i class="glyphicon glyphicon-search"></i>
-                        </button>
-                    {!! Form::close() !!}
+                            <input type="search" name="q" class="form-control search-input" placeholder="Search" autocomplete="off">
+                        {!! Form::close() !!}
+                    </div>
+                    <button type="submit" class="btn btn-default b-search">
+                        <i class="glyphicon glyphicon-search"></i>
+                        {{ trans('common.text.search_book') }}
+                    </button>
                 </div>
             </div>
         </div>

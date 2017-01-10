@@ -226,4 +226,9 @@ class Book extends BaseModel
         //then return the count directly
         return ($related) ? (int)$related->aggregate : 0;
     }
+
+    public function imagePhoto()
+    {
+        return config('settings.book.image_path') . $this->image;
+    }
 }

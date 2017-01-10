@@ -13,7 +13,7 @@
 </a>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book.list') }}
+        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book_list') }}
     </div>
     <div class="panel-body book-wrapper">
         {!! Form::open([
@@ -42,7 +42,7 @@
                         <tr>
                             <td>{{ Form::checkbox('idBooks[]', $book->id) }}</td>
                             <td class="td-image">
-                                <img src="{{ asset('images/book/'.$book->image) }}" alt="image book">
+                                <img src="{{ $book->imagePhoto() }}" alt="image book">
                             </td>
                             <td>{{ $book->author->name }}</td>
                             <td class="td-title">{{ $book->title }}</td>
@@ -75,7 +75,8 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                                 {!! Form::close() !!}
-                                {!! Form::open(['action' => ['Admin\BookController@destroy', $book->id], 'method' => 'delete',
+                                {!! Form::open(['action' => ['Admin\BookController@destroy', $book->id],
+                                    'method' => 'delete',
                                     'class' => 'delete-book-form'
                                 ]) !!}
                                     <a href="javascript:void(0)" class="trash del-book">

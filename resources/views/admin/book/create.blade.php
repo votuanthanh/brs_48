@@ -10,7 +10,7 @@
 </a>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book.create') }}
+        <span class="glyphicon glyphicon-list"></span>{{ trans('form.heading.book_create') }}
     </div>
     <div class="panel-body book-create-wrapper">
         {!! Form::open([

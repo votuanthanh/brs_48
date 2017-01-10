@@ -16,6 +16,7 @@ return [
         'logout' => 'Log out',
         'menu' => 'MENU',
         'edit_profile' => 'Edit Profile',
+        'send_request' => 'Send Request',
     ],
     'heading' => [
         'login_form' => 'Type your username and password.',
@@ -27,6 +28,11 @@ return [
         'total_count' => 'Total Count',
         'update_book' => 'Type to update to book',
         'book_create' => 'Type to create a book',
+        'edit_user' => 'Type to edit user',
+        'user_list' => 'List User',
+        'book_create' => 'Create Book',
+        'book_list' => 'List Book',
+        'book_request' => 'Request Books',
     ],
     'label' => [
         'remember_me' => 'Remember Me',
@@ -47,6 +53,10 @@ return [
         'date_request' => 'Date Request',
         'request' => 'Action',
         'profile' => 'Profile',
+        'about_book' => 'This book was about',
+        'go_to_admin' => 'Go To Admin',
+        'author' => 'Author',
+        'review' => 'Review',
     ],
     'placeholder' => [
         'email' => 'Enter your email',
@@ -56,5 +66,7 @@ return [
         'name_book' => 'Enter name book',
         'description' => 'Enter Description',
         'pages' => 'Enter number page',
+        'author' => 'Choose a author',
+        'category' => 'Choose a category',
     ],
 ];

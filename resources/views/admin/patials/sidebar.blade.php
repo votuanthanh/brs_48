@@ -17,7 +17,12 @@
                             <div id="dropdown-manager-user" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <ul class="nav navbar-nav">
-                                        <li><a href="#"><i class="glyphicon glyphicon-tag"></i>{{ trans('common.user.list') }}</a></li>
+                                        <li>
+                                            <a href="{{ action('Admin\UserController@index') }}">
+                                                <i class="glyphicon glyphicon-tag"></i>
+                                                {{ trans('common.user.list') }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -32,15 +37,29 @@
                             <div id="dropdown-manager-book" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <ul class="nav navbar-nav">
-                                        <li><a href="#"><i class="glyphicon glyphicon-tag"></i>{{ trans('common.book.create') }}</a></li>
-                                        <li><a href="#"><i class="glyphicon glyphicon-tag"></i>{{ trans('common.book.list') }}</a></li>
-                                        <li><a href="#"><i class="glyphicon glyphicon-tag"></i>{{ trans('common.book.request') }}</a></li>
+                                        <li>
+                                            <a href="{{ action('Admin\BookController@create') }}">
+                                                <i class="glyphicon glyphicon-tag"></i>
+                                                {{ trans('common.book.create') }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ action('Admin\BookController@index') }}">
+                                                <i class="glyphicon glyphicon-tag"></i>
+                                                {{ trans('common.book.list') }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ action('Admin\RequestBookController@index') }}">
+                                            <i class="glyphicon glyphicon-tag"></i>
+                                                {{ trans('common.book.request') }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </li>
                         <!--END: Manger User -->
-
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->

@@ -131,6 +131,38 @@ class User extends Authenticatable
     protected static function boot()
     {
         parent::boot();
+
+        //before delete() method call this
+        static::deleting(function ($user) {
+            $user->load('reviews.comments');
+            //delete request book of user
+            $user->requestBooks()->delete();
+
+            //delete read or reading book of user
+            $user->readingBooks()->detach();
+
+            //delete favorite book
+            $user->favoriteBooks()->detach();
+
+            //delete users following
+            $user->following()->detach();
+
+            //delete followers
+            $user->followers()->detach();
+
+            //delete comments
+            $user->comments()->delete();
+
+            //delete reivew
+            $user->reviews()->delete();
+
+            //delete likes
+            $user->likes()->delete();
+
+            //delete image
+            deleteImage(config('settings.user.avatar_path'), $user->avatar);
+        });
+
         static::creating(function ($user) {
             //set role user for register
             $user->role = config('settings.user.role.member');

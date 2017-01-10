@@ -30,10 +30,10 @@ class RequestBookRepository extends BaseRepository implements RequestBookReposit
         }
         $requestBook = $this->model->find($id);
 
-        if ($requestBook->is_accepted) {
-            $option = false;
+        if ($requestBook->isCheckAccepted()) {
+            $option = config('settings.request_book.not_accept');
         } else {
-            $option = true;
+            $option = config('settings.request_book.accepted');
             Mail::to($requestBook->user->email)->queue(new RequestBookToUser($id));
         }
 

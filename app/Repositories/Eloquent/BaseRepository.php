@@ -190,6 +190,17 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->destroy($id);
     }
 
+    /**
+     * Search Whatever
+     *
+     * @param  string $query
+     * @return builder
+     */
+    public function search($query)
+    {
+        return $this->model->search($query);
+    }
+
     public function getCurrentUser()
     {
         return Auth::user();

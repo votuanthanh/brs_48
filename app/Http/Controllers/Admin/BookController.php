@@ -58,20 +58,13 @@ class BookController extends BaseController
     public function store(Request $request)
     {
         if ($this->bookRepository->create($request->all())) {
-            flashMessage(
-                trans('common.text.book'),
-                trans('common.text.created'),
-                trans('common.text.success')
-            );
+            flash(trans('common.noty.book.create.success'), 'success');
+
             return redirect()->action('Admin\BookController@index');
         }
 
-        flashMessage(
-            trans('common.text.book'),
-            trans('common.text.created'),
-            trans('common.text.fail'),
-            'danger'
-        );
+        flash(trans('common.noty.book.create.success'), 'danger');
+
         return back();
     }
 
@@ -111,20 +104,13 @@ class BookController extends BaseController
     public function update(Request $request, $id)
     {
         if ($this->bookRepository->updateBook($request->all(), $id)) {
-            flashMessage(
-                trans('common.text.book'),
-                trans('common.text.updated'),
-                trans('common.text.success')
-            );
+            flash(trans('common.noty.book.update.success'), 'success');
+
             return back();
         }
 
-        flashMessage(
-            trans('common.text.book'),
-            trans('common.text.updated'),
-            trans('common.text.fail'),
-            'danger'
-        );
+        flash(trans('common.noty.book.update.fail'), 'danger');
+
         return back();
     }
 
@@ -137,20 +123,13 @@ class BookController extends BaseController
     public function destroy($id)
     {
         if ($this->bookRepository->delete($id)) {
-            flashMessage(
-                trans('common.text.book'),
-                trans('common.text.deleted'),
-                trans('common.text.success')
-            );
+            flash(trans('common.noty.book.delete.success'), 'success');
+
             return back();
         }
 
-        flashMessage(
-            trans('common.text.book'),
-            trans('common.text.deleted'),
-            trans('common.text.fail'),
-            'danger'
-        );
+        flash(trans('common.noty.book.delete.fail'), 'danger');
+
         return back();
     }
 
@@ -163,23 +142,19 @@ class BookController extends BaseController
      */
     public function deleteAnything(Request $request)
     {
-        if ($request->has('idBooks') && $listId = $request->get('requestBook')) {
+        if ($request->has('idBooks') && $listId = $request->get('idBooks')) {
             if ($this->bookRepository->deleteAnything($listId)) {
-                flashMessage(
-                    trans('common.text.book'),
-                    trans('common.text.deleted'),
-                    trans('common.text.success')
-                );
+                flash(trans('common.noty.book.delete.success'), 'success');
+
                 return back();
             }
+            flash(trans('common.noty.book.delete.fail'), 'danger');
+
+            return back();
         }
 
-        flashMessage(
-            trans('common.text.book'),
-            trans('common.text.deleted'),
-            trans('common.text.fail'),
-            'danger'
-        );
+        flash(trans('common.noty.book.delete.fail'), 'danger');
+
         return back();
     }
 }

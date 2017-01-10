@@ -10,13 +10,13 @@ function uploadImage($image, $path, $oldImage = null)
 {
     if ($image) {
         //set unique name avatar
-        $fileName = uniqid(time()) . '.' . $image->getClientOriginalExtension();
+        $fileName = public_path() . uniqid(time()) . '.' . $image->getClientOriginalExtension();
 
         //move directory folder image
         $image->move($path, $fileName);
 
         //delete old image for update image2wbmp(image)
-        if (!empty($oldImage) && !strpos($oldImage, 'default')) {
+        if (!empty($oldImage)) {
             deleteImage($path, $oldImage);
         }
 
@@ -30,7 +30,7 @@ function uploadImage($image, $path, $oldImage = null)
 function deleteImage($path, $nameFile)
 {
     //check file exists
-    if (file_exists($imageDestinationPath = $path.$nameFile)) {
+    if (file_exists($imageDestinationPath = public_path() . $path . $nameFile) && !preg_match('#default#', $nameFile)) {
         File::delete($imageDestinationPath);
     }
 
@@ -44,4 +44,22 @@ function flashMessage($item, $action, $status, $alert = 'success')
         'action' => $action,
         'status' => $status,
     ]), $alert);
+}
+
+function modalLogin()
+{
+    if (!Auth::check()) {
+        return 'data-toggle=modal data-target=#auth-modal';
+    }
+
+    return;
+}
+
+function attrUser($class)
+{
+    if (Auth::check()) {
+        return $class;
+    }
+
+    return;
 }

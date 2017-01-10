@@ -51,4 +51,40 @@ class Review extends BaseModel
     {
         return $this->hasMany(Comment::class);
     }
+
+     /**
+     * Get Percent rating book
+     *
+     * @return int
+     */
+    public function computePercentRating()
+    {
+        return (int) ($this->star * 100 / config('settings.book.number_rating'));
+    }
+
+    public function likesCount()
+    {
+        return $this->morphOne(Like::class, 'likes', 'target_type', 'target_id');
+    }
+
+    public function getlikeCountAttribute()
+    {
+        //if relation is not loaded already, let's do it first
+        if (! array_key_exists('likesCount', $this->relations)) {
+            $this->load('likesCount');
+        }
+
+        $related = $this->getRelation('likesCount');
+
+        //then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($review) {
+            $review->user_id = auth()->user()->id;
+        });
+    }
 }

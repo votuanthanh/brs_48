@@ -5,11 +5,14 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Carbon\Carbon;
+use Nicolaslopezj\Searchable\SearchableTrait;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Book extends BaseModel
 {
     use Sluggable;
     use SluggableScopeHelpers;
+    use SearchableTrait;
 
     protected $fillable = [
         'category_id',
@@ -21,6 +24,27 @@ class Book extends BaseModel
         'avg_rate',
         'author_id',
         'slug',
+    ];
+
+    /**
+     * Searchable rules.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        /**
+         * Columns and their priority in search results.
+         * Columns with higher values are more important.
+         * Columns with equal values have equal importance.
+         *
+         * @var array
+         */
+        'columns' => [
+            'books.title' => 10,
+            'books.description' => 8,
+            'books.number_of_pages' => 2,
+            'books.publish_date' => 4,
+        ],
     ];
 
     protected $dates = ['publish_date'];
@@ -137,5 +161,69 @@ class Book extends BaseModel
             //Delete Images's book
             deleteImage(config('settings.book.image_path'), $book->image);
         });
+    }
+
+    /**
+     * get all id related user
+     *
+     * @return Collection
+     */
+    public function getUserFavoriteIds()
+    {
+        return $this->favoriteUsers()->getRelatedIds();
+    }
+
+    /**
+     * Get all id that read book
+     * @return Collection
+     */
+    public function getUserReadBookIds()
+    {
+        return $this->readingUsers()->getRelatedIds();
+    }
+
+    public function reviewsCount()
+    {
+        return $this->hasOne(Review::class)
+            ->selectRaw('book_id, count(*) as aggregate')
+            ->groupBy('book_id');
+    }
+
+    public function getReviewsCountAttribute()
+    {
+        //if relation is not loaded already, let's do it first
+        if (! array_key_exists('reviewsCount', $this->relations)) {
+            $this->load('reviewsCount');
+        }
+
+        $related = $this->getRelation('reviewsCount');
+
+        // then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
+    }
+
+    public function userFavoriteCount()
+    {
+        $hasOne = new HasOne(
+            (new User())->newQuery(),
+            $this->newPivot(new FavoriteBook(), [], FavoriteBook::getTableName(), false),
+            'book_id', 'id'
+        );
+        $hasOne->getQuery()->from(FavoriteBook::getTableName());
+
+        return $hasOne->selectRaw('book_id, count(*) as aggregate')->groupBy('book_id');
+    }
+
+    public function getUserFavoriteCountAttribute()
+    {
+        //if relation is not loaded already, let's do it first
+        if (!array_key_exists('userFavoriteCount', $this->relations)) {
+            $this->load('userFavoriteCount');
+        }
+
+        $related = $this->getRelation('userFavoriteCount');
+
+        //then return the count directly
+        return ($related) ? (int)$related->aggregate : 0;
     }
 }

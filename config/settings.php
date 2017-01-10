@@ -15,14 +15,14 @@ return [
         'is_read' => 1,
         'limit' => 6,
         'favorite' => 1,
-        'image_path' => public_path() . '/images/book/',
+        'image_path' => '/images/book/',
     ],
     'user' => [
         'role' => [
             'admin' => 1,
             'member' => 0,
         ],
-        'avatar_path' => public_path() . '/images/avatar/',
+        'avatar_path' => '/images/avatar/',
         'avatar_default' => 'avatar_default.jpg',
     ],
     'pagination' => [
